@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(cookieParser());
 const corsOptions={
-    origin:'https://job-spark-blue.vercel.app/',//jo frontend use kareghe vo react vichrte hai uska localhopst 5173 hota hai ye hota haui
+    origin:['http://localhost:5173','https://job-spark-blue.vercel.app'],//jo frontend use kareghe vo react vichrte hai uska localhopst 5173 hota hai ye hota haui
     credentials:true
 }
 app.use(cors(corsOptions));
