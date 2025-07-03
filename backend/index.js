@@ -1,35 +1,44 @@
 import express from "express";
-import cookieParser from "cookie-parser";//browser me jo cookie hai usko backend me use karne ke liye
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./utils/db.js";
-import userRoute from "./routes/user.route.js"
-import companyRoute from "./routes/company.route.js"
-import jobRoute from "./routes/job.route.js"
-import applicationRoute from "./routes/application.route.js"
 
-const app= express();
-dotenv.config({});
+import userRoute from "./routes/user.route.js";
+import companyRoute from "./routes/company.route.js";
+import jobRoute from "./routes/job.route.js";
+import applicationRoute from "./routes/application.route.js";
 
-//middelware
+dotenv.config(); // ✅ Load env first
+
+const app = express();
+
+// Middleware
 app.use(express.json());
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-const corsOptions={
-    origin:'http://localhost:5173',//jo frontend use kareghe vo react vichrte hai uska localhopst 5173 hota hai ye hota haui
-    credentials:true
-}
+
+// ✅ CORS: use "*" temporarily or Render frontend domain in production
+const corsOptions = {
+  origin: ["http://localhost:5173"], // ✅ add both dev & deployed frontend
+  credentials: true,
+};
 app.use(cors(corsOptions));
 
-const PORT=process.env.PORT|| 3000;
+// Routes
+app.use("/api/v1/user", userRoute);
+app.use("/api/v1/company", companyRoute);
+app.use("/api/v1/job", jobRoute);
+app.use("/api/v1/application", applicationRoute);
 
+// ✅ Make sure to use Render-assigned port
+const PORT = process.env.PORT || 3000;
 
-app.use("/api/v1/user",userRoute);
-app.use("/api/v1/company",companyRoute);
-app.use("/api/v1/job",jobRoute);
-app.use("/api/v1/application",applicationRoute);
-
-app.listen(PORT,()=>{
-    connectDB();
-    console.log(`server i srunning at ${PORT}`)
-})
+// ✅ Connect DB before starting the server
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`✅ Server running on port ${PORT}`);
+  });
+}).catch((err) => {
+  console.error("❌ Database connection failed:", err);
+});
