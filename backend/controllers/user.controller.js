@@ -95,11 +95,13 @@ export const login=async (req,res)=>{
             profile:user.profile,
 
         }
-        return res.status(200).cookie("token",token,{maxAge:1*24*60*60*1000,httpsOnly:true,sameSite:'Strict'}).json({
-            message:`Welcome back ${user.fullname}`,
-            user,
-            success:true
-        })
+        res.cookie("token", token, {
+  maxAge: 1 * 24 * 60 * 60 * 1000,
+  httpOnly: true,
+  secure: true,       // ✅ important on Vercel/Render HTTPS
+  sameSite: "None",   // ✅ required for cross-origin cookie sharing
+});
+
     } catch (error) {
         console.log(error);
         
